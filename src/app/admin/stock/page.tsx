@@ -16,6 +16,7 @@ export type Product = {
   status: 'In Stock' | 'Low Stock' | 'Out of Stock';
   variations: Variation[];
   images: string[]; // array of base64 or URLs
+  image?: string; // fallback single image
   tag?: string;
 };
 

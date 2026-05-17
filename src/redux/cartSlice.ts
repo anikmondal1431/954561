@@ -1,12 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CartItem {
-  id: number;
+  id: number | string;
   name: string;
   price: number;
   quantity: number;
   weight: string;
   image: string;
+  category?: string;
 }
 
 interface CartState {
@@ -39,7 +40,7 @@ const cartSlice = createSlice({
       }
       state.totalAmount += newItem.price;
     },
-    removeItemFromCart(state, action: PayloadAction<number>) {
+    removeItemFromCart(state, action: PayloadAction<number | string>) {
       const id = action.payload;
       const existingItem = state.items.find((item) => item.id === id);
       state.totalQuantity--;
