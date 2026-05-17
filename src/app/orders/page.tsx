@@ -48,6 +48,31 @@ export default function MyOrdersPage() {
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [customerName, setCustomerName] = useState('');
+  const [orders, setOrders] = useState<any[]>([]);
+
+  const loadOrders = () => {
+    const saved = localStorage.getItem('chakdaha_orders');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.length > 0) {
+          // Map real orders to display schema
+          setOrders(parsed.slice().reverse().map((o: any) => ({
+            id: o.id,
+            date: o.placedAt ? new Date(o.placedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : "Today",
+            status: o.status || 'Pending',
+            total: o.total,
+            items: o.items ? o.items.reduce((acc: number, item: any) => acc + item.quantity, 0) : 0,
+            address: o.customer?.address || 'Chakdaha',
+            products: o.items || []
+          })));
+          return;
+        }
+      } catch {}
+    }
+    // Fallback to DUMMY_ORDERS if no orders exist yet
+    setOrders(DUMMY_ORDERS);
+  };
 
   useEffect(() => {
     const user = localStorage.getItem('chakdaha_user');
@@ -57,7 +82,46 @@ export default function MyOrdersPage() {
         setCustomerName(parsed.name || '');
       } catch {}
     }
+    
+    loadOrders();
+    const interval = setInterval(loadOrders, 3000); // Live poll order status changes
+    return () => clearInterval(interval);
   }, []);
+
+  const handleCancelOrder = (orderId: string) => {
+    if (confirm("Are you sure you want to cancel this order?")) {
+      const saved = localStorage.getItem('chakdaha_orders');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          const updated = parsed.map((o: any) => o.id === orderId ? { ...o, status: 'Cancelled' } : o);
+          localStorage.setItem('chakdaha_orders', JSON.stringify(updated));
+          loadOrders();
+          alert("Order cancelled successfully!");
+        } catch {}
+      }
+    }
+  };
+
+  const handleRequestReturn = (orderId: string) => {
+    const reason = prompt("Please enter the reason for your return (e.g., Perishable product not fresh, incorrect items):");
+    if (reason === null) return; // Cancelled prompt
+    if (!reason.trim()) {
+      alert("A return reason is required!");
+      return;
+    }
+
+    const saved = localStorage.getItem('chakdaha_orders');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const updated = parsed.map((o: any) => o.id === orderId ? { ...o, status: 'Return Requested', returnReason: reason.trim() } : o);
+        localStorage.setItem('chakdaha_orders', JSON.stringify(updated));
+        loadOrders();
+        alert("Your return request has been submitted successfully. Our team will contact you shortly!");
+      } catch {}
+    }
+  };
 
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +157,7 @@ export default function MyOrdersPage() {
       </div>
 
       <div className="space-y-4">
-        {DUMMY_ORDERS.map((order, idx) => (
+        {orders.map((order, idx) => (
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -106,7 +170,10 @@ export default function MyOrdersPage() {
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-black text-gray-400 font-mono">#{order.id}</span>
                   <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                    order.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+                    order.status === 'Delivered' ? 'bg-green-100 text-green-700' : 
+                    order.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                    order.status === 'Return Requested' ? 'bg-orange-100 text-orange-700' :
+                    'bg-blue-100 text-blue-700'
                   }`}>
                     {order.status}
                   </span>
@@ -133,16 +200,34 @@ export default function MyOrdersPage() {
                 >
                   Track Order <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
-                {order.status === 'Delivered' && (
+                {(order.status === 'Pending' || order.status === 'Processing') && (
                   <button 
-                    onClick={() => {
-                      setSelectedProduct(order.products[0]);
-                      setShowReviewModal(true);
-                    }}
-                    className="w-full md:w-auto bg-primary/10 text-primary hover:bg-primary hover:text-white px-6 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all"
+                    onClick={() => handleCancelOrder(order.id)}
+                    className="w-full md:w-auto bg-red-50 hover:bg-red-500 hover:text-white text-red-500 px-6 py-3 rounded-2xl font-bold transition-all text-sm flex items-center justify-center gap-2"
                   >
-                    <Star size={18} /> Review Product
+                    Cancel Order
                   </button>
+                )}
+                {order.status === 'Delivered' && (
+                  <>
+                    <button 
+                      onClick={() => handleRequestReturn(order.id)}
+                      className="w-full md:w-auto bg-orange-50 hover:bg-orange-500 hover:text-white text-orange-600 px-6 py-3 rounded-2xl font-bold transition-all text-sm flex items-center justify-center gap-2"
+                    >
+                      Request Return
+                    </button>
+                    {order.products.length > 0 && (
+                      <button 
+                        onClick={() => {
+                          setSelectedProduct(order.products[0]);
+                          setShowReviewModal(true);
+                        }}
+                        className="w-full md:w-auto bg-primary/10 text-primary hover:bg-primary hover:text-white px-6 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all text-sm"
+                      >
+                        <Star size={18} /> Review Product
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>

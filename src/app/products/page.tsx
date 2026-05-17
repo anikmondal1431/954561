@@ -45,8 +45,8 @@ function ProductCard({ product, onLoginRequired }: { product: Product; onLoginRe
   const isInWishlist = wishlistItems.some(i => i.id === Number(product.id) || i.id === (product.id as any));
   const [selectedVariation, setSelectedVariation] = useState(product.variations[0]);
   const [currentImageIdx, setCurrentImageIdx] = useState(0);
-  const displayImages = (product.images && product.images.length > 0) 
-    ? product.images.map(img => getProductImage(img, product.category)) 
+  const displayImages = (product.images && product.images.filter(Boolean).length > 0) 
+    ? product.images.filter(Boolean).map(img => getProductImage(img, product.category)) 
     : [getProductImage(product.image, product.category)];
 
   const [showReviews, setShowReviews] = useState(false);
@@ -140,6 +140,25 @@ function ProductCard({ product, onLoginRequired }: { product: Product; onLoginRe
           </>
         )}
       </div>
+
+      {displayImages.length > 1 && (
+        <div className="flex gap-1.5 mb-4 justify-center overflow-x-auto no-scrollbar py-1 shrink-0">
+          {displayImages.map((img, i) => (
+            <button 
+              key={i} 
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentImageIdx(i);
+              }} 
+              className={`w-10 h-10 rounded-lg overflow-hidden border-2 transition-all shrink-0 ${currentImageIdx === i ? 'border-primary scale-105 shadow-sm' : 'border-transparent opacity-60 hover:opacity-100'}`}
+            >
+              <img src={img} className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="flex-1 flex flex-col">
         <div className="flex justify-between items-start gap-2">
           <h3 className="font-bold text-gray-800 dark:text-white text-sm md:text-base line-clamp-2 leading-tight min-h-[2.5rem]">{product.name}</h3>

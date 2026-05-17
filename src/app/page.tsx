@@ -288,54 +288,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* App Download Banner */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32 pb-12">
-        <div className="bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 rounded-[4rem] p-12 md:p-24 relative overflow-hidden flex flex-col md:flex-row items-center justify-between shadow-2xl">
-          <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5"></div>
-          <div className="relative z-10 md:w-1/2 text-white space-y-10">
-            <h2 className="text-5xl md:text-7xl font-black leading-[1.1]">
-              Order Faster with <br /> <span className="text-primary-light">our Mobile App</span>
-            </h2>
-            <p className="text-gray-400 text-xl max-w-md font-medium leading-relaxed">
-              Download the Chakdaha Bazar app for exclusive local deals and real-time live order tracking.
-            </p>
-            <div className="flex flex-wrap gap-6">
-              <button className="bg-white text-black px-10 py-5 rounded-[2rem] flex items-center gap-4 hover:scale-105 transition-all shadow-2xl">
-                <span className="text-4xl">🍏</span>
-                <div className="text-left">
-                  <div className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none">Available on</div>
-                  <div className="font-black text-xl leading-tight">App Store</div>
-                </div>
-              </button>
-              <button className="bg-white text-black px-10 py-5 rounded-[2rem] flex items-center gap-4 hover:scale-105 transition-all shadow-2xl">
-                <span className="text-4xl">🤖</span>
-                <div className="text-left">
-                  <div className="text-[10px] font-black uppercase text-gray-400 tracking-widest leading-none">Available on</div>
-                  <div className="font-black text-xl leading-tight">Google Play</div>
-                </div>
-              </button>
-            </div>
-          </div>
-          <div className="md:w-1/2 mt-20 md:mt-0 relative flex justify-center">
-             <div className="w-80 h-[560px] bg-white rounded-[3.5rem] shadow-2xl border-[10px] border-gray-950 relative overflow-hidden rotate-6 hover:rotate-0 transition-transform duration-1000 group">
-                <div className="bg-primary h-28 w-full flex items-center justify-center p-6">
-                   <div className="w-24 h-2 bg-white/20 rounded-full"></div>
-                </div>
-                <div className="p-8 space-y-8">
-                    <div className="h-5 bg-gray-100 rounded-full w-3/4"></div>
-                    <div className="grid grid-cols-2 gap-6">
-                       <div className="h-24 bg-gray-50 rounded-3xl"></div>
-                       <div className="h-24 bg-gray-50 rounded-3xl"></div>
-                    </div>
-                    <div className="h-40 bg-gray-50 rounded-[2.5rem]"></div>
-                    <div className="h-14 bg-primary/10 rounded-2xl"></div>
-                </div>
-                {/* Mobile screen reflection */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none"></div>
-             </div>
-          </div>
-        </div>
-      </section>
+
       
       <LoginModal 
         isOpen={isLoginModalOpen} 
