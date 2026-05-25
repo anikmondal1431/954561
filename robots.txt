@@ -1,0 +1,17 @@
+# robots.txt — Chakdaha Bazar (chakdahabazar.in)
+# Allows all search engine crawlers
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin.html
+
+# Priority crawl path for Google
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /admin.html
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://chakdahabazar.in/sitemap.xml
