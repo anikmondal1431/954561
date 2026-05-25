@@ -1,0 +1,5 @@
+# Hostinger Node.js Deployment Configuration
+# This is a plain Node.js Express app — NOT Vite, NOT Next.js
+# Entry point: server.js
+# Start command: node server.js
+# Build command: npm install
